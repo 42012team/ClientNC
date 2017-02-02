@@ -222,7 +222,7 @@ public class View {
                     System.out.println("Описание услуги: " + s.getDescription());
                     System.out.println("Тип услуги: " + s.getType());
                     System.out.println("Статус услуги: " + activeServices.get(k).getCurrentStatus().toString());
-                    if (activeServices.get(k).getCurrentStatus().equals(ServiceStatus.DEPRECATED)) {
+                    if (s.getStatus().equals(ServiceStatus.DEPRECATED)) {
                         System.out.println("Ваша услуга устарела!");
                     }
                     if (activeServices.get(k).getNewStatus() != null) {
@@ -509,10 +509,11 @@ public class View {
                                         System.out.println("УДАЛЕНИЕ ВРЕМЕННО НЕВОЗМОЖНО!");
                                     }
                                 }
-                            }
+                            } else System.out.println("НЕКОРРЕКТНЫЙ ВВОД!");
                             break;
                         case 3:
                             System.out.println("Введите номер изменяемой услуги: ");
+                            if (sc.hasNextInt()) {
                             j = sc.nextInt();
                             if ((allServices.size() >= j) && (j > 0)) {
                                 ActionResponse actionResponse=controller.checkAction(allServices.get(j - 1).getId(), false);
@@ -522,8 +523,9 @@ public class View {
                                     System.out.println("ИЗМЕНЕНИЕ УСЛУГИ ВРЕМЕННО НЕВОЗМОЖНО! ПОВТОРИТЕ ПОЗЖЕ!");
                                 }
                             } else {
-                                System.out.println("ИЗМЕНЕНИЕ УСЛУГИ ВРЕМЕННО НЕВОЗМОЖНО! ПОВТОРИТЕ ПОЗЖЕ!");
+                                System.out.println("НЕКОРРЕКТНЫЙ ВВОД!");
                             }
+                            } else System.out.println("НЕКОРРЕКТНЫЙ ВВОД!");
                             break;
                     }
                 } else {
@@ -595,11 +597,12 @@ public class View {
         ServiceStatus serviceStatus = null;
         int i = 0;
         do {
+            Scanner scnr = new Scanner(System.in);
             System.out.println("Выберите статус услуги: ");
             System.out.println("1 - ALLOWED");
             System.out.println("2 - DEPRECATED");
-            if (sc.hasNextInt()) {
-                i = sc.nextInt();
+            if (scnr.hasNextInt()) {
+                i = scnr.nextInt();
                 switch (i) {
                     case 1:
                         serviceStatus = ServiceStatus.ALLOWED;
@@ -608,8 +611,8 @@ public class View {
                         serviceStatus = ServiceStatus.DEPRECATED;
                         break;
                 }
-            }
-        } while ((i > 2) || (i < 1));
+            } else System.out.println("НЕКОРРЕКТНЫЙ ВВОД!");
+        } while ((i != 2) && (i != 1));
         if (agreeWindow("Услуга будет изменена. ")) {
             try {
                 controller.changeService(service.getId(), name, description, serviceStatus, service.getVersion(),unlockingTime);
